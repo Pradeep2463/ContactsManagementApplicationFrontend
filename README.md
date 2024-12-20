@@ -14,6 +14,16 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
+## Features:
+
+List Contacts: View all contacts with pagination.
+Add Contact: Create a new contact.
+Edit Contact: Update an existing contact.
+Delete Contact: Remove a contact from the list.
+Search Contacts: Filter contacts by name or email.
+Sort Contacts: Sort contacts by first name, last name, or email.
+
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
