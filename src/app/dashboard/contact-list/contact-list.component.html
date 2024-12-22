@@ -9,7 +9,7 @@
       [(ngModel)]="searchQuery"
       (input)="searchContacts()"
     />
-    <button class="btn btn-primary" routerLink="/contacts/add">New Contact</button>
+    <button class="btn btn-primary" (click)="openContactForm(null)">New Contact</button>
   </div>
   
   <!-- Contact Table -->
@@ -30,9 +30,9 @@
         <td>{{ contact.lastName }}</td>
         <td>{{ contact.email }}</td>
         <td>
-          <button class="btn btn-primary btn-sm me-2" (click)="editContact(contact)">Edit</button>
+          <button class="btn btn-primary btn-sm me-2" (click)="openContactForm(contact)">Edit</button>
           <button class="btn btn-danger btn-sm m-1" data-bs-toggle="modal" data-bs-target="#delete"
-                (click)="selectToDelete(contact.id)">Delete</button>
+                (click)="openDeleteModal(deleteModal, contact.id)">Delete</button>
         </td>
       </tr>
       <tr
@@ -59,21 +59,16 @@
 </div>
 
 <!-- Delete Record modal -->
-<div class="modal fade" id="delete">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modal-heading">Delete contact </h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure want to delete?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
-          (click)="deleteContact(this.selectedId)">Delete</button>
-      </div>
-    </div>
+<ng-template #deleteModal let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5" id="modal-heading">Delete contact</h1>
+    <button type="button" class="btn-close" (click)="modal.dismiss('cancel')"></button>
   </div>
-</div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete this contact?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Close</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('delete')">Delete</button>
+  </div>
+</ng-template>
