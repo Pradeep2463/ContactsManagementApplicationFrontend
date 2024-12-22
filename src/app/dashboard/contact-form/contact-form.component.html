@@ -1,8 +1,8 @@
-<div class="container mt-4">
-  <h2 *ngIf="contact">Edit Contact</h2>
-  <h2 *ngIf="!contact">Add Contact</h2>
-  
-  <!-- Contact Form -->
+<div class="modal-header">
+  <h5 class="modal-title">{{ getActionText() }} Contact</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body">
   <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
     <div class="mb-3">
       <label for="firstName" class="form-label">First Name</label>
@@ -11,13 +11,13 @@
         type="text"
         class="form-control"
         formControlName="firstName"
-        [ngClass]="{ 'is-invalid': contactForm.get('firstName')?.invalid && contactForm.get('firstName')?.touched }"
+        [class.is-invalid]="contactForm.get('firstName')?.invalid && contactForm.get('firstName')?.touched"
       />
-      <div *ngIf="contactForm.get('firstName')?.invalid && contactForm.get('firstName')?.touched" class="invalid-feedback">
-        First Name is required.
+      <div class="invalid-feedback">
+        First name is required.
       </div>
     </div>
-    
+
     <div class="mb-3">
       <label for="lastName" class="form-label">Last Name</label>
       <input
@@ -25,29 +25,34 @@
         type="text"
         class="form-control"
         formControlName="lastName"
-        [ngClass]="{ 'is-invalid': contactForm.get('lastName')?.invalid && contactForm.get('lastName')?.touched }"
+        [class.is-invalid]="contactForm.get('lastName')?.invalid && contactForm.get('lastName')?.touched"
       />
-      <div *ngIf="contactForm.get('lastName')?.invalid && contactForm.get('lastName')?.touched" class="invalid-feedback">
-        Last Name is required.
+      <div class="invalid-feedback">
+        Last name is required.
       </div>
     </div>
-    
+
     <div class="mb-3">
       <label for="email" class="form-label">Email</label>
       <input
         id="email"
         type="email"
         class="form-control"
+        [ngClass]="{'masked-background': contact?.id}"
         formControlName="email"
-        [readonly]="contact?.id"
-        [ngClass]="{ 'is-invalid': contactForm.get('email')?.invalid && contactForm.get('email')?.touched }"
+        [readOnly]="contact?.id"
+        [class.is-invalid]="contactForm.get('email')?.invalid && contactForm.get('email')?.touched"
       />
-      <div *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched" class="invalid-feedback">
+      <div class="invalid-feedback">
         A valid email is required.
       </div>
     </div>
-    
-    <button type="submit" class="btn btn-success me-2" [disabled]="contactForm.invalid">{{getActionText()}}</button>
-    <button type="button" class="btn btn-secondary" (click)="contactForm.reset()">Reset</button>
+
+    <button type="submit" class="btn btn-success" [disabled]="contactForm.invalid">
+      {{ getActionText() }}
+    </button>
   </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Close</button>
 </div>

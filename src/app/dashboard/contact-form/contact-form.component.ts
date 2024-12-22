@@ -4,12 +4,12 @@ import { Contact } from '../../models/contact';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { timeout } from 'rxjs';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-contact-form',
   templateUrl: './contact-form.component.html',
-  styleUrl: './contact-form.component.scss'
+  styleUrl: './contact-form.component.scss',
 })
 export class ContactFormComponent {
   @Input() contact: Contact | null = null;
@@ -17,22 +17,32 @@ export class ContactFormComponent {
 
   contactForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private contactService: ContactService,private router:Router,private route: ActivatedRoute,private toastr: ToastrService) {
+  constructor(
+    private fb: FormBuilder,
+    private contactService: ContactService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toastr: ToastrService,
+    public activeModal: NgbActiveModal
+  ) {
     this.contactForm = this.fb.group({
       id: [0],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
   ngOnInit(): void {
     const id = this.route.snapshot.params['id'];
     if (id) {
-      this.contactService.getContactById(+id).subscribe(contact => {
+      this.contactService.getContactById(+id).subscribe((contact) => {
         this.contact = contact;
         this.contactForm.patchValue(contact);
       });
+    }
+    if (this.contact) {
+      this.contactForm.patchValue(this.contact);
     }
   }
 
@@ -44,6 +54,7 @@ export class ContactFormComponent {
           () => {
             this.toastr.success('Contact updated successfully');
             this.router.navigate(['']);
+            this.formSubmit.emit();
           },
           (error: Error) => {
             this.toastr.error(error.message);
@@ -54,6 +65,7 @@ export class ContactFormComponent {
           () => {
             this.toastr.success('Contact created successfully');
             this.router.navigate(['']);
+            this.formSubmit.emit();
           },
           (error: Error) => {
             this.toastr.error(error.message);

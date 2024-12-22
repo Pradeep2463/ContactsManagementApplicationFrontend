@@ -3,6 +3,8 @@ import { ContactService } from '../../services/contact.service';
 import { Contact } from '../../models/contact';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ContactFormComponent } from '../contact-form/contact-form.component';
 
 @Component({
   selector: 'app-contact-list',
@@ -19,14 +21,18 @@ export class ContactListComponent {
   hasNextPage: boolean;
   selectedId: any;
 
-  constructor(private contactService: ContactService, private router: Router,private toastr: ToastrService) {
+  constructor(private contactService: ContactService,
+     private router: Router,
+     private toastr: ToastrService,
+     private modalService: NgbModal) 
+     {
     this.searchQuery='';
     this.sortBy = 'firstName';
     this.currentPage = 1;
     this.pageSize = 5;
     this.ascending = true;
     this.hasNextPage = false;
-  }
+     }
 
   ngOnInit(): void {
     this.loadContacts();
@@ -49,12 +55,36 @@ export class ContactListComponent {
     );
   }
 
+  openContactForm(contact: Contact | null): void {
+    const modalRef = this.modalService.open(ContactFormComponent);
+    modalRef.componentInstance.contact = contact;
+    modalRef.componentInstance.formSubmit.subscribe(() => {
+      this.loadContacts();
+      modalRef.close();
+    });
+  }
+  
+
   sortContacts(orderBy: string): void {
     this.sortBy = orderBy;
     this.ascending = !this.ascending;
     this.contactService.getSortedContacts(this.sortBy, this.ascending).subscribe(
       data => this.contacts = data,
       error => console.error(error)
+    );
+  }
+
+  openDeleteModal(content: any, id: number) {
+    this.selectedId = id;
+    this.modalService.open(content).result.then(
+      (result) => {
+        if (result === 'delete') {
+          this.deleteContact(this.selectedId);
+        }
+      },
+      (reason) => {
+        console.log('Dismissed:', reason);
+      }
     );
   }
 
